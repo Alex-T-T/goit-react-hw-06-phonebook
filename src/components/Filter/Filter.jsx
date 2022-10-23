@@ -8,12 +8,10 @@ export const Filter = () => {
     const value = useSelector(getFilter)
     const dispatch = useDispatch();
 
-
     const handleInputChange = (event) => {
         const filterInput = event.currentTarget.value;
         dispatch(filterContact(filterInput))
     }
-
 
     return (
         <label> Filter by Name

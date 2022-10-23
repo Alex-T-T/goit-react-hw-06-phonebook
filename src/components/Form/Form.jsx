@@ -1,14 +1,21 @@
-import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 import css from '../Form/Form.module.css';
+import { useSelector, useDispatch } from 'react-redux';
+import { addContact } from 'redux/contactsSlice';
+import { getContacts } from 'redux/selectors';
+import { auditName } from 'utils/auditName';
+import { auditNumber } from 'utils/auditNumber';
 
-export const Form = ({onFormSubmit}) => {
+export const Form = () => {
     const [name, setname] = useState('');
     const [number, setNumber] = useState('');
+    
+    const dispatch = useDispatch();
+    const contacts = useSelector(getContacts);
 
     const handleInputChange = (event) => {
         const { name, value } = event.currentTarget
-            
+        
         console.log('event.currentTarget.name =>', event.currentTarget.name )
         switch (name) {
             case 'name':
@@ -24,9 +31,21 @@ export const Form = ({onFormSubmit}) => {
         }
     }
 
-    function handleSubmit  (event) {
+    function handleInputSubmit  (event) {
         event.preventDefault();
-        onFormSubmit( {name, number} );
+        
+        if (auditName(contacts, name)) {
+            alert(`${name} is already in contacts.`);
+            return 
+        };
+
+        if (auditNumber(contacts, number)) {
+            alert(`${number} is already in contacts.`);
+            return 
+        };
+
+        dispatch(addContact({name, number}));
+        
         reset();
     }
 
@@ -34,8 +53,9 @@ export const Form = ({onFormSubmit}) => {
         setname('');
         setNumber('');
     }
-            return (
-            <form className={css.form} onSubmit={handleSubmit}>
+
+    return (
+            <form className={css.form} onSubmit={handleInputSubmit}>
             <label> Name
                     <input
                         type="text"
@@ -57,16 +77,10 @@ export const Form = ({onFormSubmit}) => {
                             required
                             value={number}
                             onChange={handleInputChange}
-
                     />
             </label>    
 
                 <button className={css.addBtn } type='submit'> Add contact</button>
         </form>
-        )
-}
-
-Form.propTypes = {
-    onFormSubmit: PropTypes.func.isRequired,
-
+    )
 }

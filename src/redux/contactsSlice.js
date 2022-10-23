@@ -35,6 +35,7 @@ const contactsSlise = createSlice({
 const persistConfig = {
     key: "phonebook",
     storage,
+    blacklist: "filter",
 }
 
 export const persistPhonebookReducer = persistReducer(persistConfig, contactsSlise.reducer )
